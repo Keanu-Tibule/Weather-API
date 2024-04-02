@@ -8,7 +8,7 @@ function App() {
 
   const [cityName, setCityName] = useState('');
   const [weatherData, setWeatherData] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [error, setError] = useState(null);
   
   const handleInputChange = (e) => {
     setCityName(e.target.value);
@@ -26,17 +26,17 @@ function App() {
     .then(response => {
       console.log(response.data);
       setWeatherData(response.data);
-      setErrorMessage(null);
+      setError(null);
     })
     .catch(error => {
-      setErrorMessage(error.meessage);
+      setError(error.message);
       setWeatherData(null)
     });
   };
   
-  // useEffect(() => {
-  //   console.log(weatherData?.weather[0]?.main)
-  // }, [weatherData])
+  useEffect(() => {
+    console.log(weatherData?.cod)
+  }, [weatherData])
 
   return (
     <>
@@ -44,8 +44,17 @@ function App() {
         <header>
           <h1>How's the Weather Today?</h1>
         </header>
-        <input type="text" value={cityName} onChange={handleInputChange} placeholder="Enter city name" />
-        <button onClick={getWeather}>Get Weather</button>
+        <input className='searchBar' type="text" value={cityName} onChange={handleInputChange} placeholder="Enter city name" />
+        <button onClick={getWeather}>Set Location</button>
+
+        {weatherData && weatherData?.cod === 200 && (
+        <div>
+          <h2>{weatherData?.name}, {weatherData?.sys?.country}</h2>
+          <p>Temperature: {weatherData?.main?.temp} °F</p>
+          <p>Humidity: {weatherData?.main?.humidity}%</p>
+        </div>
+        )}
+        {weatherData?.cod == 404 && (<p>Error: {weatherData?.cod}</p>)}
       </div>
     </>
   )
